@@ -1,7 +1,12 @@
 from socket import gethostname
 from OpenSSL import crypto
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography import x509
+
 
 
 def keyGen():
@@ -31,4 +36,41 @@ def generate(key):
         fd.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
     with open(f"Cert\\certificat\\key.pem", "wt", 'wt') as fd:
         fd.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
-generate(key)
+
+
+def ciferM():
+    # Load the self-signed certificate and private key
+    with open("Cert\\certificat\\certif.pem", "rb") as cert_file:
+        certificate = x509.load_pem_x509_certificate(cert_file.read(), default_backend())
+
+    with open("Cert\\certificat\\key.pem", "rb") as key_file:
+        private_key = serialization.load_pem_private_key(key_file.read(), password=None, backend=default_backend())
+
+    # Message to be encrypted
+    message = b"Hello, this is a secret message."
+
+    # Encrypt the message using the public key from the certificate
+    encrypted_message = certificate.public_key().encrypt(
+        message,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+
+    # Decrypt the message using the private key
+    decrypted_message = private_key.decrypt(
+        encrypted_message,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+
+    print("Original Message:", message.decode("utf-8"))
+    print("Crypted message:", encrypted_message.hex())
+    print("Decrypted Message:", decrypted_message.decode("utf-8"))
+
+#generate(key)

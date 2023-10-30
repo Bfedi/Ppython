@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
-from cryptography import x509
 from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-
+from cryptography import x509
 
 
 def menuCer():
@@ -27,7 +27,8 @@ def menuCer():
                 else:
                     print("generer une clé avant de")
             case '3':
-                print("En cours de construction")
+                ciferM()
+                #print("En cours de construction")
             case 'q':
                 break
             case _:
@@ -88,4 +89,39 @@ def generate_selfsigned_cert(hostname, key):
 
     print("Certificat génerer avec succès")
 
+def ciferM():
+        # Load the self-signed certificate and private key
+        with open("Cert\\certificat\\certif.pem", "rb") as cert_file:
+            certificate = x509.load_pem_x509_certificate(cert_file.read(), default_backend())
+
+        with open("Cert\\certificat\\key.pem", "rb") as key_file:
+            private_key = serialization.load_pem_private_key(key_file.read(), password=None, backend=default_backend())
+
+        # Message to be encrypted
+        message = input("entrer votre message a chifrer").encode()
+
+
+        # Encrypt the message using the public key from the certificate
+        encrypted_message = certificate.public_key().encrypt(
+            message,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+
+        # Decrypt the message using the private key
+        decrypted_message = private_key.decrypt(
+            encrypted_message,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+
+        print("Original Message:", message.decode("utf-8"))
+        print("Crypted message:", encrypted_message.hex())
+        print("Decrypted Message:", decrypted_message.decode("utf-8"))
     #return cert_pem, key_pem
