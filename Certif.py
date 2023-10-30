@@ -33,10 +33,6 @@ def menuCer():
                 print("Merci d'introduire soit 1,2,3,4,5 ou bien q pour quitter")
 
 
-
-
-
-
 def keyGen():
 
         key = rsa.generate_private_key(
@@ -52,9 +48,6 @@ def generate_selfsigned_cert(hostname, key):
     name = x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, hostname)
     ])
-
-
-
     # best practice seem to be to include the hostname in the SAN, which *SHOULD* mean COMMON_NAME is ignored.
     alt_names = [x509.DNSName(hostname)]
     san = x509.SubjectAlternativeName(alt_names)
