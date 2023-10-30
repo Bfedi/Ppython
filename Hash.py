@@ -28,6 +28,7 @@ def attaqueDic():
             if i == mot :
                 return tent
 
+
 def mHachage():
 
     while True:
