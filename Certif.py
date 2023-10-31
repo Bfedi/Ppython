@@ -28,7 +28,6 @@ def menuCer():
                     print("generer une clé avant de")
             case '3':
                 ciferM()
-                #print("En cours de construction")
             case 'q':
                 break
             case _:
@@ -50,17 +49,11 @@ def keyGen():
         return key
 
 def generate_selfsigned_cert(hostname, key):
-
     name = x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, hostname)
     ])
-
-
-
-    # best practice seem to be to include the hostname in the SAN, which *SHOULD* mean COMMON_NAME is ignored.
     alt_names = [x509.DNSName(hostname)]
     san = x509.SubjectAlternativeName(alt_names)
-    # path_len=0 means this cert can only sign itself, not other certs.
     basic_contraints = x509.BasicConstraints(ca=True, path_length=0)
     now = datetime.utcnow()
     cert = (
@@ -86,22 +79,15 @@ def generate_selfsigned_cert(hostname, key):
     cert.close()
     with open(f"Cert\\certificat\\key.pem", "wb") as cle:
         cle.write(key_pem)
-
+    cle.close()
     print("Certificat génerer avec succès")
 
 def ciferM():
-        # Load the self-signed certificate and private key
         with open("Cert\\certificat\\certif.pem", "rb") as cert_file:
             certificate = x509.load_pem_x509_certificate(cert_file.read(), default_backend())
-
         with open("Cert\\certificat\\key.pem", "rb") as key_file:
             private_key = serialization.load_pem_private_key(key_file.read(), password=None, backend=default_backend())
-
-        # Message to be encrypted
-        message = input("entrer votre message a chifrer").encode()
-
-
-        # Encrypt the message using the public key from the certificate
+        message = input("entrer votre message a chifrer: ").encode()
         encrypted_message = certificate.public_key().encrypt(
             message,
             padding.OAEP(
@@ -110,8 +96,6 @@ def ciferM():
                 label=None
             )
         )
-
-        # Decrypt the message using the private key
         decrypted_message = private_key.decrypt(
             encrypted_message,
             padding.OAEP(
@@ -120,8 +104,7 @@ def ciferM():
                 label=None
             )
         )
+        print("Message Original:", message.decode())
+        print("Message Chiffrer:", encrypted_message.hex())
+        print("Message Dechifrer:", decrypted_message.decode())
 
-        print("Original Message:", message.decode("utf-8"))
-        print("Crypted message:", encrypted_message.hex())
-        print("Decrypted Message:", decrypted_message.decode("utf-8"))
-    #return cert_pem, key_pem

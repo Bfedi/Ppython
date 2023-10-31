@@ -12,7 +12,7 @@ def isValidEmail(email):
 #Fonction pour valider le Mot de Pass
 def isValidPwd(pwd):
     valid=True
-    if len(pwd) ==8:
+    if len(pwd) >=8:
         if any(car in string.digits for car in pwd):
             if any(car in string.ascii_uppercase for car in pwd):
                 if any(car in string.ascii_lowercase for car in pwd):

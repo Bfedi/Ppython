@@ -14,11 +14,8 @@ def authentifier():
     b=hashlib.sha256(b.encode()).hexdigest()
     with open('SSIR.txt' ,'r') as file:
         lines = file.readlines()
-        print(type(lines))
-        print(lines)
         for line in lines :
             line = line.strip('\n')
-            print(line)
             if  line == (f"{a};{b}") :
                 print(f"bien venue {a}")
                 menuS()
