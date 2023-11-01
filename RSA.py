@@ -28,6 +28,7 @@ def mRsa():
                 dechiffrMsg(Msg)
             case '4':
                 Sig=signeMsg()
+
             case '5':
                 if Sig!='':
                     verifigne(Sig)
