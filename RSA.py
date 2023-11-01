@@ -6,7 +6,7 @@ from Crypto.Signature import PKCS1_v1_5
 #global Msg
 #Menu Du chiffrement RSA
 def mRsa():
-
+    Sig=''
     while True:
         print("---------RSA----------")
         print("1-Generer une paire de clés")
@@ -17,6 +17,8 @@ def mRsa():
         print("q- Quitter")
 
         choix = input('Donnez votre choix : ')
+
+
         match choix:
             case '1':
                 genkey()
@@ -27,7 +29,10 @@ def mRsa():
             case '4':
                 Sig=signeMsg()
             case '5':
-                verifigne(Sig)
+                if Sig!='':
+                    verifigne(Sig)
+                else:
+                    print("Signer un message avant S'il vous plait!!")
             case 'q':
                 break
             case _:
@@ -77,6 +82,7 @@ def signeMsg():
         cle=RSA.import_key(private.read())
     signer=PKCS1_v1_5.new(cle)
     hash= SHA256.new(mot.encode())
+    print(f"Signature de {mot} effectuer, Signature : {signer.sign(hash).hex()}")
     return  signer.sign(hash)
 
 #verifier la signature
@@ -90,7 +96,7 @@ def verifigne(sign):
     digest.update(mot.encode())
     verified = signer.verify(digest,sign)
     if verified:
-        print("Verification signature avec succès")
+        print(f"Verification signature avec succès : {mot},Signature : {sign.hex()}")
     else:
         print("Verification signature echouée")
 
