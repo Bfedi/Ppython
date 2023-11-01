@@ -49,7 +49,7 @@ def ajoutEnregitrement():
                         p=hashlib.sha256(p.encode()).hexdigest()
                         with open("SSIR.txt","a") as file:
                             file.write(f"{email};{p}\n")
-                            print(f"Comte de {email} creé avec succès")
+                            print(f"Compte de {email} creé avec succès")
                             break
                     else:
                         print("merci de respecter les critére")
